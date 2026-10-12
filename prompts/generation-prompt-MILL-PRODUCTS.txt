@@ -1,0 +1,159 @@
+Generate a PowerPoint presentation with 5 slides for a SAP Use Case document. Use a white background for content slides (slides 2–5), font BentonSans throughout, and SAP brand colors: #1D80D3 for section headers, #E89A20 for cover labels, #000000 for body text.
+
+
+
+SLIDE 1 — Cover Full-bleed background: a blue-to-green gradient photographic image.
+
+Label top-left: "Use Case" — large white bold text
+
+Main title below: "Agentic Stock Cutting and Material Assignment for Mill Products Industry" — large white bold text
+
+Metadata block (two columns, lower half of slide):
+
+Left column labels in orange bold: Confidentiality / Product Category / ID / Publishing Channels / Created / Last Updated
+
+Right column values in white: Public / Artificial Intelligence, Business Technology Platform, Supply Chain Management, Application Development and Automation / UC_TRIM_MILL_001 / Content Discovery, SAP Discovery Center, SAP.COM / 08/06/2025 / 08/06/2025
+
+
+
+SLIDE 2 — Description & Use Case Classification Title bar (single line, bold black): "Agentic Stock Cutting and Material Assignment for Mill Products Industry" Thin gray horizontal divider below title. Two-column layout:
+
+LEFT COLUMN:
+
+Section header in teal uppercase bold: "DESCRIPTION"
+
+Body text: "Across the Mill Products industry — steel service centers, aluminum processors, paper converters, packaging manufacturers, film slitters, textile cutters, and glass processors — companies face the same fundamental challenge: they purchase large raw material units (coils, rolls, sheets, reels) and must cut them into smaller pieces matching customer order specifications across 5-15+ physical and chemical parameters, while minimizing waste. Raw materials must be procured 2-12 weeks before customer orders are confirmed due to supplier manufacturing lead times. Using an industry-configurable Agentic AI architecture with SAP Joule as orchestrator, specialized domain agents (Order Agent, Stock Agent), and an MCP-based optimization server powered by OR-Tools, the system automates N-parameter feasibility matching, optimal material assignment, and cutting pattern generation for any mill product type — then writes results directly back to SAP S/4HANA as reservations and production orders. The system is configurable per industry through parameter sets, operation types, machine constraints, and objective weights."
+
+Section header: "CONTACTS"
+
+Key label bold: "Use Case Owner" — with a gray circle avatar showing initials "YL" and name "Yining Liu" in teal
+
+Key label bold: "Internal Experts"
+
+RIGHT COLUMN:
+
+Section header in teal uppercase bold: "USE CASE CLASSIFICATION"
+
+Key-value rows (key in dark bold, value in black regular):
+
+Authoring Company: SAP
+
+Level of Maturity: Actionable Use Case
+
+Use Case Source: Business Technology Platform / AI
+
+Process: Design to Operate > Plan to Fulfill
+
+Product Category: Artificial Intelligence, Business Technology Platform, Supply Chain Management, Application Development and Automation
+
+Industry: Mill Products, Industrial Manufacturing, Metals, Chemicals, Consumer Products, Wholesale Distribution, Cross Industry
+
+Line of Business: Supply Chain Planning, Manufacturing
+
+Focus Topics: Artificial Intelligence, Business AI, Digital Transformation
+
+Footer: "Public" bottom-left, page number "2" bottom-right.
+
+
+
+SLIDE 3 — Challenges, Solution, Benefits, Internal Comments Same title bar and divider as slide 2. 2×2 quad layout — each quadrant has a teal uppercase bold section header followed by body text:
+
+TOP-LEFT — "CHALLENGES AND BUSINESS DRIVERS": "Mill Products processors universally face: (1) Parameter-intensive matching — each raw material unit is characterized by 5-15+ physical/chemical parameters that must match order specifications exactly or within tolerance (Steel: 13 parameters including quality, thickness, width, coating, roughness, passivation; Paper: 8+ parameters including grade, basis weight, caliper, brightness; Aluminum: 10+ parameters including alloy, temper, thickness, surface finish). (2) Procurement before demand — raw materials must be ordered weeks to months before customer orders are confirmed, creating structural supply-demand mismatch. (3) Manual planning dependency — cutting plans created by experienced planners using spreadsheets, producing 8-20% trim waste versus 2-5% achievable with optimization. (4) Multiple conflicting objectives — minimize trim waste vs. minimize tardy orders vs. minimize idle stock vs. maximize throughput. (5) Dynamic disruptions — rush orders, supplier delays, machine issues, forecast errors cause daily plan revisions. (6) SAP gap — standard PP/MRP cannot solve combinatorial cutting pattern and multi-parameter assignment optimization."
+
+TOP-RIGHT — "SOLUTION": "An industry-configurable Agentic AI system built on SAP BTP: (1) SAP Joule Orchestrator — natural language interface in SAP Fiori, LLM reasoning (ReAct pattern), industry-agnostic orchestration logic that applies identically to steel, paper, aluminum, or any mill product. (2) Order Agent — reads SAP S/4HANA SD, configurable N-parameter matching per industry vertical. (3) Stock Agent — reads SAP S/4HANA MM, handles coils, rolls, sheets, and reels with industry-specific material master data. (4) MCP Optimization Server (Python/OR-Tools) — 5 configurable tools: N-parameter feasibility network builder with connected component decomposition, 1D/2D cutting pattern solver (slitting, sheeting, cross-cutting, die-cutting), multi-objective MILP assignment optimizer with configurable weights, plan evaluator, and purchase recommender. (5) SAP Integration — reads via CDS views/OData, writes via BAPI (reservations MB21, production orders CO01, purchase requisitions ME51N), reacts via SAP Event Mesh. Same engine, industry-specific configuration."
+
+BOTTOM-LEFT — "BENEFITS": "Trim/scrap reduction of 50-75% across all mill product types (from 8-20% manual to 2-5% optimized). Planning time reduction from hours to less than 15 seconds for a full planning run. Order fulfillment improvement to 90-95%+ with automatic gap identification. Idle stock reduction of 20-40% through proactive material-to-order matching. Industry-specific ROI examples: Steel (500 tons/month at EUR 800/ton) = EUR 28,000/month savings; Paper (1,000 tons/month at EUR 600/ton) = EUR 42,000/month savings; Aluminum (200 tons/month at EUR 2,500/ton) = EUR 35,000/month savings — all from trim reduction alone. Additional benefits: elimination of person-dependency, full explainability of every decision, event-driven proactive re-planning, what-if scenario exploration, every plan immediately actionable as SAP shop orders, standardized process across plants and shifts, and same system serving multiple industry verticals through configuration."
+
+BOTTOM-RIGHT — "INTERNAL COMMENTS": "The cutting optimization problem is fundamentally the same whether you cut steel coils, paper rolls, or aluminum sheets. What changes is the parameter set and the machine constraints. The AI reasoning and SAP integration are universal. One platform, many industries." — Solution Architect
+
+"In paper converting, we used to waste 12% of every parent roll. The agentic system brought us down to 4%. The same logic applies to steel service centers, aluminum converters — anyone doing cut-to-order processing." — Production Manager, Paper Converting
+
+Footer: "Public" bottom-left, page number "3" bottom-right.
+
+
+
+SLIDE 4 — Target Customers & Qualifying Questions Same title bar and divider. Two-column layout:
+
+LEFT COLUMN:
+
+Section header: "TARGET CUSTOMERS"
+
+Key-value rows:
+
+Customer Segment: Enterprise Segment, Corporate Segment, Midmarket
+
+Customer Type: Active, Net New
+
+Buyer Persona: Chief Operating Officer (COO), Chief Information Officer (CIO), Chief Procurement Officer (CPO), VP Manufacturing, Production Planning Manager, Supply Chain Director, Plant Manager
+
+Customer Profile: Any mill products processor that cuts/slits/sheets raw materials to customer order specifications using SAP S/4HANA. Sub-industries: Steel Service Centers, Aluminum Processors, Paper Converters, Packaging Manufacturers, Film Slitters, Textile Cutters, Glass Processors, Copper/Brass Processors.
+
+Section header: "INTERNAL-SPECIFIC INFORMATION"
+
+Key-value rows:
+
+Deployment Time/Effort: 60-120 days (4 implementation phases)
+
+Competitive Differentiation: High — No native SAP solution exists for combinatorial cutting optimization with agentic orchestration; industry-configurable platform approach
+
+RIGHT COLUMN:
+
+Section header: "QUALIFYING QUESTIONS"
+
+Sub-label bold: "Business Questions"
+
+Body text (dash-prefixed list):
+
+— Do you cut, slit, or sheet raw materials (rolls, coils, sheets) to fulfill customer orders?
+
+— Must your raw materials match customer orders across multiple physical or chemical parameters?
+
+— Do you procure raw materials before confirmed customer orders exist?
+
+— Is your cutting/slitting planning done manually or with basic spreadsheets?
+
+— Do you experience greater than 5% trim or scrap loss in your cutting operations?
+
+— Is planning expertise concentrated in a few key individuals?
+
+— Are your material plans frequently disrupted by order changes or supply delays?
+
+— Do you need to balance conflicting objectives (waste vs. delivery vs. stock utilization)?
+
+Sub-label bold: "Technical Questions"
+
+Body text (dash-prefixed list):
+
+— Do you run SAP S/4HANA for inventory management and sales order processing?
+
+— Would you benefit from SAP Joule natural language interaction for planning operations?
+
+— Is event-driven re-planning (automatically reacting to new orders and material arrivals) valuable?
+
+— Do you need full audit trails and explainability for planning decisions?
+
+— Would a single platform serving multiple plants or product lines be valuable?
+
+Footer: "Public" bottom-left, page number "4" bottom-right.
+
+
+
+SLIDE 5 — Mission-Specific Information Same title bar and divider. Section header: "MISSION-SPECIFIC INFORMATION" Two-column layout:
+
+LEFT (wide): Sub-label bold "Solution Diagram" — place a placeholder image or architecture diagram showing: SAP Business Technology Platform box containing Cloud Foundry Environment (with SAP Joule Orchestrator Agent connected to SAP AI Core for LLM, CAP Agent Services containing Order Agent and Stock Agent with configurable N-parameter matching and OData V4 connections, Python MCP Server with OR-Tools solver engine supporting slitting/sheeting/cross-cutting/die-cutting, SAP HANA Cloud for plan history and feasibility cache), connected via Cloud Connector/Private Link to SAP S/4HANA (MM for Raw Material Inventory/Batches/Reservations, SD for Sales Orders/Forecasts, PP for Production Orders). SAP Event Mesh connecting S/4HANA events to BTP agents. User interaction via SAP Fiori Launchpad with Joule sidebar. Side panel showing industry configuration options: Steel (13 parameters, slitting + CTL), Paper (8 parameters, slitting + sheeting), Aluminum (10 parameters, slitting + blanking), Film/Packaging (gauge/gsm parameters, slitting + die-cutting). Title: "Agentic Stock Cutting — Industry-Configurable Solution Architecture"
+
+RIGHT (narrow): Sub-label bold "Additional Mission Information" Key-value rows:
+
+Support Mode: Full Support
+
+Implementation Phases: Foundation (4-6 weeks), SAP Integration (4-6 weeks), Agentic Orchestration (4-6 weeks), Hardening (2-4 weeks)
+
+Prerequisites: SAP S/4HANA, SAP BTP with AI Core, SAP Event Mesh
+
+Technology Stack: Python (OR-Tools, MCP SDK), Node.js (SAP CAP), SAP AI Core (LLM runtime)
+
+Industry Configurability: Parameter sets, operation types, machine constraints, objective weights — all configurable per industry vertical without code changes
+
+Sub-label bold: "Guided Answers"
+
+Footer: "Public" bottom-left, page number "5" bottom-right.

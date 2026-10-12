@@ -1,0 +1,20 @@
+{
+  "name": "agenticstockcuttingandmaterialassignment",
+  "version": "1.0.0",
+  "description": "## SAP-Centric Cookbook Design for Steel Service Centers",
+  "main": "generate-excel.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "docx": "^9.7.1",
+    "pptxgenjs": "^4.0.1",
+    "xlsx": "^0.18.5"
+  }
+}

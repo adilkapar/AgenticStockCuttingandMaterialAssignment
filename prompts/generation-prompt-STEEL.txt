@@ -1,0 +1,151 @@
+Generate a PowerPoint presentation with 5 slides for a SAP Use Case document. Use a white background for content slides (slides 2–5), font BentonSans throughout, and SAP brand colors: #1D80D3 for section headers, #E89A20 for cover labels, #000000 for body text.
+
+
+
+SLIDE 1 — Cover Full-bleed background: a blue-to-green gradient photographic image.
+
+Label top-left: "Use Case" — large white bold text
+
+Main title below: "Agentic Stock Cutting and Material Assignment for Steel Service Centers" — large white bold text
+
+Metadata block (two columns, lower half of slide):
+
+Left column labels in orange bold: Confidentiality / Product Category / ID / Publishing Channels / Created / Last Updated
+
+Right column values in white: Public / Artificial Intelligence, Business Technology Platform, Supply Chain Management, Application Development and Automation / UC_TRIM_001 / Content Discovery, SAP Discovery Center, SAP.COM / 08/06/2025 / 08/06/2025
+
+
+
+SLIDE 2 — Description & Use Case Classification Title bar (single line, bold black): "Agentic Stock Cutting and Material Assignment for Steel Service Centers" Thin gray horizontal divider below title. Two-column layout:
+
+LEFT COLUMN:
+
+Section header in teal uppercase bold: "DESCRIPTION"
+
+Body text: "Steel Service Centers (Çelik Servis Merkezleri) purchase raw material coils from producers and process them into smaller products for customers through slitting and cut-to-length operations. The fundamental challenge is that raw materials must be procured 4-8 weeks before customer orders are confirmed, because supplier lead times exceed order confirmation horizons. Each coil is characterized by 13 physical parameters (product group, quality, thickness, width, surface group, coating amount, outer/inner diameter, weight, roughness, passivation, protective oil amount, and origin) that must match customer order specifications. Using an Agentic AI architecture with SAP Joule as orchestrator, specialized Order and Stock agents, and an MCP-based optimization server powered by OR-Tools, the system automates feasibility matching, optimal material assignment, and cutting pattern generation — achieving 2-4% trim loss versus 8-15% with manual planning — then writes results directly back to SAP S/4HANA as reservations and production orders. Since each steel service center has different product mixes, machine capabilities, and business priorities, the system is configurable through objective weights and constraint parameters."
+
+Section header: "CONTACTS"
+
+Key label bold: "Use Case Owner" — with a gray circle avatar showing initials "YL" and name "Yining Liu" in teal
+
+Key label bold: "Internal Experts"
+
+RIGHT COLUMN:
+
+Section header in teal uppercase bold: "USE CASE CLASSIFICATION"
+
+Key-value rows (key in dark bold, value in black regular):
+
+Authoring Company: SAP
+
+Level of Maturity: Actionable Use Case
+
+Use Case Source: Business Technology Platform / AI
+
+Process: Design to Operate > Plan to Fulfill
+
+Product Category: Artificial Intelligence, Business Technology Platform, Supply Chain Management, Application Development and Automation
+
+Industry: Mill Products, Industrial Manufacturing, Metals, Wholesale Distribution, Cross Industry
+
+Line of Business: Supply Chain Planning, Manufacturing
+
+Focus Topics: Artificial Intelligence, Business AI, Digital Transformation
+
+Footer: "Public" bottom-left, page number "2" bottom-right.
+
+
+
+SLIDE 3 — Challenges, Solution, Benefits, Internal Comments Same title bar and divider as slide 2. 2×2 quad layout — each quadrant has a teal uppercase bold section header followed by body text:
+
+TOP-LEFT — "CHALLENGES AND BUSINESS DRIVERS": "Steel Service Centers face a structurally hard optimization problem: raw material coils must be purchased against forecasts weeks before customer orders are confirmed, because supplier lead times (4-8 weeks) exceed order horizons (1-2 weeks). Each coil has 13 physical parameters that must match order specifications almost exactly — making procurement nearly order-specific. Manual planning relies on individual expertise, takes hours, produces 8-15% trim waste, and breaks daily due to order changes, supply disruptions, and forecast errors. Standard SAP PP/MRP does not solve the combinatorial cutting pattern and material assignment optimization natively. The lack of integrated optimization leads to excessive scrap, tardy deliveries, idle stock, and over-reliance on key planning personnel."
+
+TOP-RIGHT — "SOLUTION": "An Agentic AI system built on SAP BTP combining: (1) SAP Joule Orchestrator — natural language interface embedded in SAP Fiori, using LLM reasoning (ReAct pattern) to decompose planning requests, delegate to domain agents, invoke optimization tools, explain trade-offs, and write confirmed plans back to SAP. (2) Order Agent — reads SAP S/4HANA SD sales orders and forecasts, evaluates feasibility, tracks fulfillment, identifies urgent and infeasible orders. (3) Stock Agent — reads SAP S/4HANA MM coil inventory (stock, in-transit, purchase orders), manages reservations, availability calculations, and idle coil detection. (4) MCP Optimization Server (Python/OR-Tools) — exposes 5 tools: feasibility network builder with connected component decomposition, 1D/2D cutting pattern solver, multi-objective MILP assignment optimizer, plan evaluator, and purchase recommender. (5) SAP Integration — reads via CDS views/OData, writes via BAPI (reservations MB21, production orders CO01), reacts via SAP Event Mesh."
+
+BOTTOM-LEFT — "BENEFITS": "Trim loss reduction from 8-15% (manual) to 2-4% (optimized) — representing 50-75% waste reduction and significant raw material cost savings. Planning time reduction from hours to less than 15 seconds for a full planning run. Order fulfillment improvement to 90%+ with automatic identification of supply gaps. Idle stock reduction of 20-40% through proactive coil-to-order matching. For a typical operation of 500 tons/month at EUR 800/ton, this translates to EUR 28,000/month savings from trim reduction alone. Additional benefits: elimination of person-dependency in planning, full explainability of every decision, event-driven proactive re-planning, what-if scenario exploration, and every plan immediately actionable as SAP shop orders."
+
+BOTTOM-RIGHT — "INTERNAL COMMENTS": "The system solves the fundamental contradiction we face every day: we buy steel before knowing what customers will order, and then we need to figure out the best way to cut it. Having an AI agent that can reason about 13 parameters across hundreds of coils and orders, explain WHY it made each decision, and then create the SAP transactions — that changes everything for our planning team." — Production Planning Manager, Steel Service Center
+
+Footer: "Public" bottom-left, page number "3" bottom-right.
+
+
+
+SLIDE 4 — Target Customers & Qualifying Questions Same title bar and divider. Two-column layout:
+
+LEFT COLUMN:
+
+Section header: "TARGET CUSTOMERS"
+
+Key-value rows:
+
+Customer Segment: Enterprise Segment, Corporate Segment, Midmarket
+
+Customer Type: Active, Net New
+
+Buyer Persona: Chief Operating Officer (COO), Chief Information Officer (CIO), Chief Procurement Officer (CPO), VP Manufacturing, Production Planning Manager
+
+Customer Profile: Steel Service Centers / Flat Steel Processors using SAP S/4HANA with slitting and cut-to-length operations
+
+Section header: "INTERNAL-SPECIFIC INFORMATION"
+
+Key-value rows:
+
+Deployment Time/Effort: 60-120 days (4 implementation phases)
+
+Competitive Differentiation: High — No native SAP solution exists for combinatorial cutting optimization with agentic orchestration
+
+RIGHT COLUMN:
+
+Section header: "QUALIFYING QUESTIONS"
+
+Sub-label bold: "Business Questions"
+
+Body text (dash-prefixed list):
+
+— Do you manually match raw material coils to customer orders based on multiple physical parameters?
+
+— Is your production planning process dependent on specific individuals' expertise and experience?
+
+— Do you experience greater than 5% trim loss in your slitting and cut-to-length operations?
+
+— Are your material plans frequently disrupted by new orders, date changes, or supply delays?
+
+— Do you procure raw materials based on forecasts before confirmed orders exist?
+
+— Would you benefit from automatic identification of orders that cannot be fulfilled from available stock?
+
+— Do you need to balance multiple conflicting objectives (trim loss vs. on-time delivery vs. stock utilization)?
+
+Sub-label bold: "Technical Questions"
+
+Body text (dash-prefixed list):
+
+— Do you run SAP S/4HANA for inventory management and sales order processing?
+
+— Would you benefit from SAP Joule natural language interaction for planning operations?
+
+— Is event-driven re-planning (automatically reacting to new orders and coil arrivals) valuable for your operations?
+
+— Do you need full audit trails and explainability for planning decisions?
+
+Footer: "Public" bottom-left, page number "4" bottom-right.
+
+
+
+SLIDE 5 — Mission-Specific Information Same title bar and divider. Section header: "MISSION-SPECIFIC INFORMATION" Two-column layout:
+
+LEFT (wide): Sub-label bold "Solution Diagram" — place a placeholder image or architecture diagram showing: SAP Business Technology Platform box containing Cloud Foundry Environment (with SAP Joule Orchestrator Agent connected to SAP AI Core for LLM, CAP Agent Services containing Order Agent and Stock Agent with OData V4 connections, Python MCP Server with OR-Tools solver engine, SAP HANA Cloud for plan history and feasibility cache), connected via Cloud Connector/Private Link to SAP S/4HANA (MM for Coil Inventory/Batches/Reservations, SD for Sales Orders/Forecasts, PP for Production Orders). SAP Event Mesh connecting S/4HANA events to BTP agents. User interaction via SAP Fiori Launchpad with Joule sidebar. Title: "Agentic Stock Cutting — Solution Architecture"
+
+RIGHT (narrow): Sub-label bold "Additional Mission Information" Key-value rows:
+
+Support Mode: Full Support
+
+Implementation Phases: Foundation (4-6 weeks), SAP Integration (4-6 weeks), Agentic Orchestration (4-6 weeks), Hardening (2-4 weeks)
+
+Prerequisites: SAP S/4HANA, SAP BTP with AI Core, SAP Event Mesh
+
+Technology Stack: Python (OR-Tools, MCP SDK), Node.js (SAP CAP), SAP AI Core (LLM runtime)
+
+Sub-label bold: "Guided Answers"
+
+Footer: "Public" bottom-left, page number "5" bottom-right.

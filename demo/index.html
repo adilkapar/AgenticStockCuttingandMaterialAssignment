@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Stock Cutting — Interactive Demo</title>
+<style>
+:root{--blue:#0070f2;--dark:#1a2b42;--light:#f5f6fa;--green:#2b9e4f;--orange:#e76500;--red:#d32f2f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'72',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--light);color:#333}
+.app{display:grid;grid-template-columns:400px 1fr;grid-template-rows:52px 1fr;height:100vh}
+.hdr{grid-column:1/-1;background:var(--dark);color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px}
+.hdr h1{font-size:15px;font-weight:500}
+.hdr .badge{background:var(--blue);padding:2px 10px;border-radius:12px;font-size:10px}
+.hdr .sub{margin-left:auto;font-size:11px;opacity:.7}
+.chat{border-right:1px solid #e0e0e0;display:flex;flex-direction:column;background:#fff}
+.chat-hd{padding:10px 16px;border-bottom:1px solid #e8e8e8;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px}
+.chat-hd .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.inp-area{padding:10px;border-top:1px solid #e8e8e8;display:flex;gap:8px}
+.inp-area input{flex:1;padding:9px 12px;border:1px solid #d0d0d0;border-radius:8px;font-size:12px;outline:none}
+.inp-area input:focus{border-color:var(--blue)}
+.inp-area button{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 14px;cursor:pointer;font-size:12px;font-weight:500}
+.qa{padding:6px 14px;display:flex;flex-wrap:wrap;gap:5px;border-bottom:1px solid #e8e8e8}
+.qa button{background:#e8f0fe;color:var(--blue);border:none;border-radius:14px;padding:4px 10px;font-size:10px;cursor:pointer}
+.qa button:hover{background:#d0e3fc}
+.msg{max-width:95%;padding:9px 13px;border-radius:12px;font-size:12px;line-height:1.5;animation:fadeIn .3s ease-out}
+.msg.user{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg.bot{background:#f0f2f5;align-self:flex-start;border-bottom-left-radius:4px}
+.msg .think{color:#888;font-style:italic;font-size:10px;margin-bottom:4px;display:block}
+.results{overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);animation:fadeIn .4s ease-out}
+.card-h{padding:12px 16px;font-weight:600;font-size:13px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.card-b{padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi{text-align:center;padding:14px 8px;border-radius:8px;background:var(--light)}
+.kpi .v{font-size:22px;font-weight:700;color:var(--dark)}
+.kpi .l{font-size:10px;color:#666;margin-top:3px}
+.kpi.g .v{color:var(--green)}
+.kpi.w .v{color:var(--orange)}
+.kpi.r .v{color:var(--red)}
+.cut-viz{display:flex;flex-direction:column;gap:12px}
+.cpat{border:1px solid #e8e8e8;border-radius:8px;padding:10px}
+.cpat .lbl{font-size:11px;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
+.cpat .tbadge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:500}
+.cpat .tbadge.g{background:#c8e6c9;color:#2e7d32}
+.cpat .tbadge.o{background:#fff9c4;color:#f57f17}
+.cpat .tbadge.r{background:#ffcdd2;color:#c62828}
+.cbar{display:flex;height:40px;border-radius:4px;overflow:hidden;border:2px solid #444}
+.cbar .s{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#333;border-right:1.5px solid #444}
+.cbar .s:last-child{border-right:none}
+.cbar .s.trim{background:repeating-linear-gradient(45deg,#ffcdd2,#ffcdd2 2px,#fff 2px,#fff 4px);color:#999;font-size:8px}
+.cmeta{font-size:10px;color:#666;margin-top:5px;display:flex;gap:14px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{text-align:left;padding:7px 8px;background:#f8f9fa;font-weight:600;border-bottom:1px solid #e0e0e0}
+.tbl td{padding:6px 8px;border-bottom:1px solid #f0f0f0}
+.tbl tr:hover td{background:#f5f8ff}
+.dot-s{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px}
+.dot-s.p{background:var(--green)}
+.dot-s.u{background:var(--red)}
+.dot-s.w{background:var(--orange)}
+.welcome{text-align:center;padding:50px 30px;color:#888}
+.welcome h2{color:var(--dark);margin-bottom:10px;font-size:20px}
+.welcome p{font-size:13px;line-height:1.7;max-width:500px;margin:0 auto}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hdr">
+<svg width="22" height="22" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#0070f2"/><text x="5" y="17" font-size="13" fill="#fff" font-weight="bold">J</text></svg>
+<h1>Agentic Stock Cutting &amp; Material Assignment</h1>
+<span class="badge">DEMO</span>
+<span class="sub">Joule + Planning Data Service + MCP Optimizer (OR-Tools)</span>
+</header>
+<div class="chat">
+<div class="chat-hd"><span class="dot"></span>Joule — Planning Assistant</div>
+<div class="qa">
+<button onclick="run('Plan all open orders')">📋 Plan All</button>
+<button onclick="run('Show idle coils over 30 days')">📦 Idle Coils</button>
+<button onclick="run('Can ORD-007 be fulfilled?')">🔍 ORD-007</button>
+<button onclick="run('Best use of COIL-012?')">🎯 COIL-012</button>
+<button onclick="run('Supply-demand balance for HDG DX51D 0.5mm')">📊 S/D Balance</button>
+</div>
+<div class="msgs" id="msgs">
+<div class="msg bot">👋 Hello! I'm your <b>Joule planning assistant</b>.<br><br>I can help with:<br>• <b>Plan all open orders</b> — full optimization run<br>• <b>Check specific orders</b> — feasibility analysis<br>• <b>Analyze coils</b> — best utilization<br>• <b>What-if scenarios</b> — compare alternatives<br><br>Try the quick actions above or type a query below!</div>
+</div>
+<div class="inp-area">
+<input id="inp" placeholder="Ask about orders, coils, planning..." onkeypress="if(event.key==='Enter')submit()">
+<button onclick="submit()">Send</button>
+</div>
+</div>
+<div class="results" id="res">
+<div class="welcome">
+<h2>🏭 Steel Service Center — Planning Demo</h2>
+<p>This interactive mockup simulates the complete agentic planning system with <b>25 orders</b> and <b>35 mother coils</b>.<br><br>Click a query on the left to see the optimization in action with visual cutting patterns and KPI results.</p>
+<p style="margin-top:16px;font-size:11px;color:#aaa">Architecture: Joule (LLM Agent) → Planning Data Service (SAP CAP) → MCP Server (OR-Tools Optimizer)</p>
+</div>
+</div>
+</div>
+<script>
+// Mock Data: 25 Orders + 35 Mother Coils
+const COLORS=['#bbdefb','#c8e6c9','#fff9c4','#d1c4e9','#ffccbc','#b2dfdb','#f8bbd0','#dcedc8','#b3e5fc','#ffe0b2','#e1bee7','#f0f4c3'];
+
+const ORDERS=[
+{id:'ORD-001',pg:'HDG',q:'DX51D',t:0.5,w:1000,tons:5,due:'2025-02-20',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-002',pg:'HDG',q:'DX51D',t:0.5,w:500,tons:3,due:'2025-02-18',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-003',pg:'HDG',q:'DX51D',t:0.5,w:750,tons:4,due:'2025-02-22',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-004',pg:'HDG',q:'DX51D',t:0.5,w:600,tons:2.5,due:'2025-02-15',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-005',pg:'HDG',q:'DX51D',t:0.5,w:480,tons:2,due:'2025-02-25',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-006',pg:'HDG',q:'DX51D',t:0.5,w:1200,tons:7,due:'2025-02-19',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-007',pg:'HDG',q:'DX51D',t:0.5,w:300,tons:1.5,due:'2025-02-28',type:'forecast',coat:275,surf:'A'},
+{id:'ORD-008',pg:'CR',q:'DC01',t:0.8,w:1000,tons:6,due:'2025-02-21',type:'confirmed',coat:0,surf:'B'},
+{id:'ORD-009',pg:'CR',q:'DC01',t:0.8,w:500,tons:3,due:'2025-02-17',type:'confirmed',coat:0,surf:'B'},
+{id:'ORD-010',pg:'CR',q:'DC01',t:0.8,w:750,tons:4,due:'2025-02-23',type:'confirmed',coat:0,surf:'B'},
+{id:'ORD-011',pg:'CR',q:'DC01',t:0.8,w:400,tons:2,due:'2025-02-26',type:'forecast',coat:0,surf:'B'},
+{id:'ORD-012',pg:'HDG',q:'DX51D',t:0.7,w:800,tons:5,due:'2025-02-20',type:'confirmed',coat:200,surf:'A'},
+{id:'ORD-013',pg:'HDG',q:'DX51D',t:0.7,w:600,tons:3.5,due:'2025-02-22',type:'confirmed',coat:200,surf:'A'},
+{id:'ORD-014',pg:'HDG',q:'DX51D',t:0.7,w:450,tons:2,due:'2025-02-19',type:'confirmed',coat:200,surf:'A'},
+{id:'ORD-015',pg:'HRC',q:'S235JR',t:2.0,w:1200,tons:10,due:'2025-02-24',type:'confirmed',coat:0,surf:'C'},
+{id:'ORD-016',pg:'HRC',q:'S235JR',t:2.0,w:600,tons:5,due:'2025-02-21',type:'confirmed',coat:0,surf:'C'},
+{id:'ORD-017',pg:'HRC',q:'S235JR',t:2.0,w:400,tons:3,due:'2025-02-27',type:'forecast',coat:0,surf:'C'},
+{id:'ORD-018',pg:'HDG',q:'DX51D',t:0.5,w:900,tons:4.5,due:'2025-02-16',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-019',pg:'HDG',q:'DX51D',t:0.5,w:1100,tons:6,due:'2025-02-23',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-020',pg:'CR',q:'DC01',t:0.8,w:600,tons:3.5,due:'2025-02-20',type:'confirmed',coat:0,surf:'B'},
+{id:'ORD-021',pg:'HDG',q:'DX51D',t:0.5,w:700,tons:3,due:'2025-02-25',type:'forecast',coat:275,surf:'A'},
+{id:'ORD-022',pg:'EG',q:'DC04',t:0.6,w:800,tons:4,due:'2025-02-22',type:'confirmed',coat:150,surf:'A'},
+{id:'ORD-023',pg:'EG',q:'DC04',t:0.6,w:500,tons:2.5,due:'2025-02-24',type:'confirmed',coat:150,surf:'A'},
+{id:'ORD-024',pg:'HDG',q:'DX51D',t:0.5,w:1400,tons:8,due:'2025-02-21',type:'confirmed',coat:275,surf:'A'},
+{id:'ORD-025',pg:'CR',q:'DC01',t:0.8,w:800,tons:5,due:'2025-02-19',type:'confirmed',coat:0,surf:'B'}
+];
+
+const COILS=[
+{id:'COIL-001',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:14,coat:275,surf:'A',status:'stock',age:12},
+{id:'COIL-002',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:12,coat:275,surf:'A',status:'stock',age:8},
+{id:'COIL-003',pg:'HDG',q:'DX51D',t:0.5,w:1250,tons:10,coat:275,surf:'A',status:'stock',age:20},
+{id:'COIL-004',pg:'HDG',q:'DX51D',t:0.5,w:1250,tons:11,coat:275,surf:'A',status:'stock',age:5},
+{id:'COIL-005',pg:'HDG',q:'DX51D',t:0.5,w:1000,tons:8,coat:275,surf:'A',status:'stock',age:15},
+{id:'COIL-006',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:13,coat:275,surf:'A',status:'in_transit',age:0},
+{id:'COIL-007',pg:'HDG',q:'DX51D',t:0.5,w:1200,tons:9,coat:275,surf:'A',status:'stock',age:25},
+{id:'COIL-008',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:15,coat:275,surf:'A',status:'stock',age:3},
+{id:'COIL-009',pg:'CR',q:'DC01',t:0.8,w:1500,tons:12,coat:0,surf:'B',status:'stock',age:10},
+{id:'COIL-010',pg:'CR',q:'DC01',t:0.8,w:1250,tons:10,coat:0,surf:'B',status:'stock',age:18},
+{id:'COIL-011',pg:'CR',q:'DC01',t:0.8,w:1500,tons:14,coat:0,surf:'B',status:'stock',age:7},
+{id:'COIL-012',pg:'HDG',q:'DX51D',t:0.7,w:1500,tons:13,coat:200,surf:'A',status:'stock',age:22},
+{id:'COIL-013',pg:'HDG',q:'DX51D',t:0.7,w:1250,tons:9,coat:200,surf:'A',status:'stock',age:14},
+{id:'COIL-014',pg:'HRC',q:'S235JR',t:2.0,w:1500,tons:20,coat:0,surf:'C',status:'stock',age:6},
+{id:'COIL-015',pg:'HRC',q:'S235JR',t:2.0,w:1250,tons:15,coat:0,surf:'C',status:'stock',age:30},
+{id:'COIL-016',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:12,coat:275,surf:'A',status:'stock',age:35},
+{id:'COIL-017',pg:'HDG',q:'DX51D',t:0.5,w:1000,tons:7,coat:275,surf:'A',status:'stock',age:42},
+{id:'COIL-018',pg:'CR',q:'DC01',t:0.8,w:1000,tons:8,coat:0,surf:'B',status:'stock',age:38},
+{id:'COIL-019',pg:'EG',q:'DC04',t:0.6,w:1500,tons:11,coat:150,surf:'A',status:'stock',age:9},
+{id:'COIL-020',pg:'EG',q:'DC04',t:0.6,w:1250,tons:9,coat:150,surf:'A',status:'stock',age:16},
+{id:'COIL-021',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:14,coat:275,surf:'A',status:'in_transit',age:0},
+{id:'COIL-022',pg:'CR',q:'DC01',t:0.8,w:1500,tons:13,coat:0,surf:'B',status:'in_transit',age:0},
+{id:'COIL-023',pg:'HDG',q:'DX51D',t:0.5,w:1250,tons:10,coat:275,surf:'A',status:'stock',age:28},
+{id:'COIL-024',pg:'HDG',q:'DX51D',t:0.7,w:1500,tons:12,coat:200,surf:'A',status:'in_transit',age:0},
+{id:'COIL-025',pg:'HRC',q:'S235JR',t:2.0,w:1500,tons:18,coat:0,surf:'C',status:'stock',age:11},
+{id:'COIL-026',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:13,coat:275,surf:'A',status:'stock',age:45},
+{id:'COIL-027',pg:'CR',q:'DC01',t:0.8,w:1250,tons:11,coat:0,surf:'B',status:'stock',age:33},
+{id:'COIL-028',pg:'HDG',q:'DX51D',t:0.5,w:1200,tons:10,coat:275,surf:'A',status:'stock',age:19},
+{id:'COIL-029',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:15,coat:275,surf:'A',status:'stock',age:2},
+{id:'COIL-030',pg:'CR',q:'DC01',t:0.8,w:1500,tons:12,coat:0,surf:'B',status:'stock',age:4},
+{id:'COIL-031',pg:'HDG',q:'DX51D',t:0.5,w:1000,tons:6,coat:275,surf:'A',status:'stock',age:50},
+{id:'COIL-032',pg:'EG',q:'DC04',t:0.6,w:1500,tons:10,coat:150,surf:'A',status:'in_transit',age:0},
+{id:'COIL-033',pg:'HRC',q:'S235JR',t:2.0,w:1250,tons:14,coat:0,surf:'C',status:'stock',age:21},
+{id:'COIL-034',pg:'HDG',q:'DX51D',t:0.5,w:1500,tons:13,coat:275,surf:'A',status:'stock',age:7},
+{id:'COIL-035',pg:'CR',q:'DC01',t:0.8,w:1250,tons:10,coat:0,surf:'B',status:'stock',age:26}
+];
+// ═══════════════════════════════════════════════════
+// OPTIMIZER — Feasibility + Bin-Packing Solver
+// ═══════════════════════════════════════════════════
+function isFeasible(order, coil) {
+  return order.pg === coil.pg && order.q === coil.q && order.t === coil.t &&
+    order.coat === coil.coat && order.surf === coil.surf && coil.w >= order.w + 10;
+}
+
+function findFeasibleCoils(order) {
+  return COILS.filter(c => c.status === 'stock' && isFeasible(order, c));
+}
+
+function solveCuttingPattern(coil, orders) {
+  // Greedy first-fit-decreasing bin packing for slitting
+  const sorted = [...orders].sort((a, b) => b.w - a.w);
+  const available = coil.w - 10; // 5mm trim each side
+  const strips = [];
+  let used = 0;
+  for (const o of sorted) {
+    if (used + o.w + 3 <= available) { // 3mm knife width
+      strips.push({ orderId: o.id, width: o.w, tons: o.tons });
+      used += o.w + 3;
+    }
+  }
+  if (strips.length > 0) used -= 3; // no knife after last strip
+  const trim = coil.w - used - 10;
+  const trimPct = ((trim + 10) / coil.w * 100).toFixed(1);
+  return { coilId: coil.id, coilWidth: coil.w, strips, trim: trim + 10, trimPct: parseFloat(trimPct), used };
+}
+
+function runFullPlan() {
+  const groups = {};
+  ORDERS.forEach(o => {
+    const key = `${o.pg}_${o.q}_${o.t}_${o.coat}_${o.surf}`;
+    if (!groups[key]) groups[key] = { orders: [], coils: [] };
+    groups[key].orders.push(o);
+  });
+  COILS.filter(c => c.status === 'stock').forEach(c => {
+    const key = `${c.pg}_${c.q}_${c.t}_${c.coat}_${c.surf}`;
+    if (groups[key]) groups[key].coils.push(c);
+  });
+
+  const assignments = [];
+  const planned = new Set();
+  let totalTrim = 0, totalUsed = 0, totalWidth = 0;
+
+  Object.values(groups).forEach(g => {
+    // Sort coils by age descending (use oldest first)
+    const sortedCoils = [...g.coils].sort((a, b) => b.age - a.age);
+    const remainingOrders = [...g.orders];
+
+    for (const coil of sortedCoils) {
+      if (remainingOrders.length === 0) break;
+      const feasible = remainingOrders.filter(o => coil.w >= o.w + 10);
+      if (feasible.length === 0) continue;
+      const pattern = solveCuttingPattern(coil, feasible);
+      if (pattern.strips.length > 0) {
+        assignments.push(pattern);
+        totalTrim += pattern.trim;
+        totalUsed += pattern.used;
+        totalWidth += coil.w;
+        pattern.strips.forEach(s => {
+          planned.add(s.orderId);
+          const idx = remainingOrders.findIndex(o => o.id === s.orderId);
+          if (idx >= 0) remainingOrders.splice(idx, 1);
+        });
+      }
+    }
+  });
+
+  const avgTrim = totalWidth > 0 ? (totalTrim / totalWidth * 100).toFixed(1) : 0;
+  const plannedCount = planned.size;
+  const unplanned = ORDERS.filter(o => !planned.has(o.id));
+  const tardy = ORDERS.filter(o => planned.has(o.id) && o.due < '2025-02-17').length;
+
+  return { assignments, plannedCount, unplanned, avgTrim, tardy, totalOrders: ORDERS.length };
+}
+
+// ═══════════════════════════════════════════════════
+// VISUALIZATION HELPERS
+// ═══════════════════════════════════════════════════
+function renderKPIs(result) {
+  const trimClass = result.avgTrim < 4 ? 'g' : result.avgTrim < 8 ? 'w' : 'r';
+  const planClass = result.plannedCount / result.totalOrders > 0.85 ? 'g' : 'w';
+  const tardyClass = result.tardy === 0 ? 'g' : result.tardy < 3 ? 'w' : 'r';
+  return `<div class="kpis">
+    <div class="kpi ${trimClass}"><div class="v">${result.avgTrim}%</div><div class="l">Avg Trim Loss</div></div>
+    <div class="kpi ${planClass}"><div class="v">${result.plannedCount}/${result.totalOrders}</div><div class="l">Orders Planned</div></div>
+    <div class="kpi ${tardyClass}"><div class="v">${result.tardy}</div><div class="l">Tardy Orders</div></div>
+    <div class="kpi"><div class="v">${result.assignments.length}</div><div class="l">Coils Used</div></div>
+    <div class="kpi"><div class="v">${result.unplanned.length}</div><div class="l">Unplanned</div></div>
+  </div>`;
+}
+
+function renderPattern(pat, idx) {
+  const trimClass = pat.trimPct < 4 ? 'g' : pat.trimPct < 8 ? 'o' : 'r';
+  let bars = '';
+  pat.strips.forEach((s, i) => {
+    const pct = (s.width / pat.coilWidth * 100).toFixed(1);
+    bars += `<div class="s" style="width:${pct}%;background:${COLORS[i % COLORS.length]}">${s.orderId}<br>${s.width}mm</div>`;
+  });
+  const trimPct = (pat.trim / pat.coilWidth * 100).toFixed(1);
+  if (pat.trim > 0) {
+    bars += `<div class="s trim" style="width:${trimPct}%">trim<br>${pat.trim}mm</div>`;
+  }
+  return `<div class="cpat">
+    <div class="lbl"><span>${pat.coilId} (${pat.coilWidth}mm)</span><span class="tbadge ${trimClass}">${pat.trimPct}% trim</span></div>
+    <div class="cbar">${bars}</div>
+    <div class="cmeta"><span>Strips: ${pat.strips.length}</span><span>Orders: ${pat.strips.map(s=>s.orderId).join(', ')}</span></div>
+  </div>`;
+}
+
+function renderOrderTable(result) {
+  let rows = '';
+  ORDERS.forEach(o => {
+    const isPlanned = !result.unplanned.find(u => u.id === o.id);
+    const dotClass = isPlanned ? 'p' : 'u';
+    const status = isPlanned ? 'Planned' : 'Unplanned';
+    rows += `<tr><td><span class="dot-s ${dotClass}"></span>${o.id}</td><td>${o.pg} ${o.q} ${o.t}mm</td><td>${o.w}mm</td><td>${o.tons}t</td><td>${o.due}</td><td>${o.type}</td><td>${status}</td></tr>`;
+  });
+  return `<table class="tbl"><thead><tr><th>Order</th><th>Spec</th><th>Width</th><th>Tons</th><th>Due</th><th>Type</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ═══════════════════════════════════════════════════
+// CHAT & ORCHESTRATION
+// ═══════════════════════════════════════════════════
+function addMsg(text, type) {
+  const div = document.createElement('div');
+  div.className = `msg ${type}`;
+  div.innerHTML = text;
+  document.getElementById('msgs').appendChild(div);
+  document.getElementById('msgs').scrollTop = 99999;
+}
+
+function showResults(html) {
+  document.getElementById('res').innerHTML = html;
+}
+
+function submit() {
+  const inp = document.getElementById('inp');
+  if (!inp.value.trim()) return;
+  run(inp.value.trim());
+  inp.value = '';
+}
+
+function run(query) {
+  addMsg(query, 'user');
+
+  // Simulate thinking delay
+  setTimeout(() => {
+    if (query.toLowerCase().includes('plan all')) {
+      handlePlanAll();
+    } else if (query.toLowerCase().includes('idle coil')) {
+      handleIdleCoils();
+    } else if (query.toLowerCase().match(/ord-\d+/i)) {
+      const match = query.match(/ord-\d+/i);
+      handleOrderCheck(match[0].toUpperCase());
+    } else if (query.toLowerCase().match(/coil-\d+/i)) {
+      const match = query.match(/coil-\d+/i);
+      handleCoilUse(match[0].toUpperCase());
+    } else if (query.toLowerCase().includes('balance') || query.toLowerCase().includes('supply')) {
+      handleBalance();
+    } else {
+      addMsg(`<span class="think">💭 Analyzing your query...</span>I understand you want to know about: "${query}"<br><br>Try one of these:<br>• "Plan all open orders"<br>• "Can ORD-007 be fulfilled?"<br>• "Best use of COIL-012?"<br>• "Show idle coils over 30 days"<br>• "Supply-demand balance for HDG DX51D 0.5mm"`, 'bot');
+    }
+  }, 300);
+}
+
+function handlePlanAll() {
+  addMsg(`<span class="think">💭 THOUGHT: User wants full planning run. Let me gather demand + supply, build feasibility network, then optimize...</span>
+<span class="think">⚡ ACTION 1: PlanningDataService.get_order_pool() → ${ORDERS.length} orders</span>
+<span class="think">⚡ ACTION 2: PlanningDataService.get_available_coils() → ${COILS.filter(c=>c.status==='stock').length} coils in stock</span>
+<span class="think">⚡ ACTION 3: MCP.build_feasibility_network() → building groups...</span>
+<span class="think">⚡ ACTION 4: MCP.optimize_assignment() → solving...</span>
+<span class="think">⚡ ACTION 5: MCP.solve_cutting_pattern() → generating patterns...</span>`, 'bot');
+
+  setTimeout(() => {
+    const result = runFullPlan();
+    addMsg(`📋 <b>Planning Complete!</b><br><br>✅ ${result.plannedCount}/${result.totalOrders} orders planned (${(result.plannedCount/result.totalOrders*100).toFixed(0)}%)<br>📉 ${result.avgTrim}% average trim loss<br>⏰ ${result.tardy} tardy orders<br>📦 ${result.assignments.length} coils assigned<br>⚠️ ${result.unplanned.length} unplanned orders<br><br>See detailed results on the right panel →`, 'bot');
+
+    const patternsHtml = result.assignments.slice(0, 8).map((p, i) => renderPattern(p, i)).join('');
+    showResults(`
+      <div class="card"><div class="card-h">📊 KPI Summary</div><div class="card-b">${renderKPIs(result)}</div></div>
+      <div class="card"><div class="card-h">🔪 Cutting Patterns (Top 8 of ${result.assignments.length})<span style="font-size:10px;color:#888">Showing best patterns</span></div><div class="card-b"><div class="cut-viz">${patternsHtml}</div></div></div>
+      <div class="card"><div class="card-h">📋 Order Status</div><div class="card-b">${renderOrderTable(result)}</div></div>
+    `);
+  }, 800);
+}
+
+function handleIdleCoils() {
+  const idle = COILS.filter(c => c.status === 'stock' && c.age > 30);
+  addMsg(`<span class="think">💭 THOUGHT: User wants idle coils > 30 days. Let me check stock ages...</span>
+<span class="think">⚡ ACTION: PlanningDataService.get_idle_coils(threshold_days=30)</span>`, 'bot');
+
+  setTimeout(() => {
+    let info = idle.map(c => {
+      const feasible = ORDERS.filter(o => isFeasible(o, c));
+      return `• <b>${c.id}</b> (${c.pg} ${c.q} ${c.t}mm, ${c.w}mm, ${c.tons}t) — ${c.age} days idle — ${feasible.length} feasible orders`;
+    }).join('<br>');
+    addMsg(`📦 Found <b>${idle.length} idle coils</b> (>30 days in stock):<br><br>${info}<br><br>Total idle weight: <b>${idle.reduce((s,c)=>s+c.tons,0)}t</b>`, 'bot');
+
+    let rows = idle.map(c => {
+      const feasible = ORDERS.filter(o => isFeasible(o, c));
+      return `<tr><td>${c.id}</td><td>${c.pg} ${c.q} ${c.t}mm</td><td>${c.w}mm</td><td>${c.tons}t</td><td><b>${c.age} days</b></td><td>${feasible.length > 0 ? '✅ ' + feasible.length + ' orders' : '❌ None'}</td></tr>`;
+    }).join('');
+    showResults(`<div class="card"><div class="card-h">📦 Idle Coils (>${30} days)</div><div class="card-b"><table class="tbl"><thead><tr><th>Coil</th><th>Spec</th><th>Width</th><th>Weight</th><th>Age</th><th>Feasible Orders</th></tr></thead><tbody>${rows}</tbody></table></div></div>`);
+  }, 500);
+}
+
+function handleOrderCheck(orderId) {
+  const order = ORDERS.find(o => o.id === orderId);
+  if (!order) { addMsg(`❌ Order ${orderId} not found in the system.`, 'bot'); return; }
+
+  addMsg(`<span class="think">💭 THOUGHT: User wants to check feasibility for ${orderId}. Let me find matching coils...</span>
+<span class="think">⚡ ACTION: PlanningDataService.get_feasible_coils_for_order("${orderId}")</span>`, 'bot');
+
+  setTimeout(() => {
+    const feasible = findFeasibleCoils(order);
+    if (feasible.length === 0) {
+      addMsg(`❌ <b>${orderId}</b> (${order.pg} ${order.q} ${order.t}mm, ${order.w}mm, ${order.tons}t) cannot be fulfilled.<br><br>No coil in stock matches all 13 parameters. Recommendation: <b>Purchase new coil</b>.`, 'bot');
+      showResults(`<div class="card"><div class="card-h">❌ ${orderId} — No Feasible Coil</div><div class="card-b"><p>Order spec: ${order.pg} ${order.q} ${order.t}mm, width ${order.w}mm, coating ${order.coat}g/m², surface ${order.surf}</p><p style="margin-top:10px;color:var(--red)">No available coil matches. Consider purchasing a ${order.pg} ${order.q} ${order.t}mm coil with min width ${order.w + 50}mm.</p></div></div>`);
+    } else {
+      // Show cutting options
+      const patterns = feasible.slice(0, 3).map(c => solveCuttingPattern(c, [order]));
+      const best = patterns.sort((a, b) => a.trimPct - b.trimPct)[0];
+      let optionsText = feasible.slice(0, 3).map((c, i) => {
+        const p = patterns[i];
+        return `• <b>${c.id}</b> (${c.w}mm, ${c.tons}t) — trim: ${p.trimPct}%`;
+      }).join('<br>');
+      addMsg(`✅ <b>${orderId}</b> can be fulfilled! ${feasible.length} coils match.<br><br>Top options:<br>${optionsText}<br><br>🏆 Best: <b>${best.coilId}</b> with ${best.trimPct}% trim loss.`, 'bot');
+
+      const vizHtml = patterns.slice(0, 3).map((p, i) => renderPattern(p, i)).join('');
+      showResults(`<div class="card"><div class="card-h">🔍 Feasibility: ${orderId} (${order.pg} ${order.q} ${order.t}mm, ${order.w}mm)</div><div class="card-b"><div class="cut-viz">${vizHtml}</div></div></div>`);
+    }
+  }, 500);
+}
+
+function handleCoilUse(coilId) {
+  const coil = COILS.find(c => c.id === coilId);
+  if (!coil) { addMsg(`❌ Coil ${coilId} not found.`, 'bot'); return; }
+
+  addMsg(`<span class="think">💭 THOUGHT: User wants best use for ${coilId}. Let me find all feasible orders and optimize cutting...</span>
+<span class="think">⚡ ACTION: PlanningDataService.get_feasible_orders_for_coil("${coilId}")</span>`, 'bot');
+
+  setTimeout(() => {
+    const feasible = ORDERS.filter(o => isFeasible(o, coil));
+    if (feasible.length === 0) {
+      addMsg(`⚠️ <b>${coilId}</b> (${coil.pg} ${coil.q} ${coil.t}mm, ${coil.w}mm) has no feasible orders currently.`, 'bot');
+      return;
+    }
+    const pattern = solveCuttingPattern(coil, feasible);
+    addMsg(`🎯 <b>Best use of ${coilId}</b> (${coil.w}mm, ${coil.tons}t, ${coil.pg} ${coil.q} ${coil.t}mm):<br><br>${feasible.length} feasible orders found. Optimal cut:<br>• Strips: ${pattern.strips.map(s => s.orderId + ' (' + s.width + 'mm)').join(', ')}<br>• Trim loss: <b>${pattern.trimPct}%</b> (${pattern.trim}mm)<br>• Orders served: <b>${pattern.strips.length}</b>`, 'bot');
+
+    showResults(`<div class="card"><div class="card-h">🎯 Best Use: ${coilId} (${coil.w}mm, ${coil.tons}t)</div><div class="card-b"><div class="cut-viz">${renderPattern(pattern, 0)}</div><p style="margin-top:12px;font-size:11px;color:#666">Feasible orders: ${feasible.map(o => o.id).join(', ')}</p></div></div>`);
+  }, 500);
+}
+
+function handleBalance() {
+  addMsg(`<span class="think">💭 THOUGHT: User wants supply-demand balance. Let me aggregate by spec group...</span>
+<span class="think">⚡ ACTION: PlanningDataService.get_supply_demand_balance()</span>`, 'bot');
+
+  setTimeout(() => {
+    const specs = {};
+    ORDERS.forEach(o => {
+      const k = `${o.pg} ${o.q} ${o.t}mm`;
+      if (!specs[k]) specs[k] = { demand: 0, supply: 0, orders: 0, coils: 0 };
+      specs[k].demand += o.tons;
+      specs[k].orders++;
+    });
+    COILS.filter(c => c.status === 'stock').forEach(c => {
+      const k = `${c.pg} ${c.q} ${c.t}mm`;
+      if (!specs[k]) specs[k] = { demand: 0, supply: 0, orders: 0, coils: 0 };
+      specs[k].supply += c.tons;
+      specs[k].coils++;
+    });
+
+    let summary = Object.entries(specs).map(([k, v]) => {
+      const ratio = v.supply / (v.demand || 1);
+      const status = ratio > 1.5 ? '🟢 Oversupplied' : ratio > 0.8 ? '🟡 Balanced' : '🔴 Shortage';
+      return `• <b>${k}</b>: Supply ${v.supply.toFixed(0)}t / Demand ${v.demand.toFixed(0)}t — ${status}`;
+    }).join('<br>');
+    addMsg(`📊 <b>Supply-Demand Balance:</b><br><br>${summary}`, 'bot');
+
+    let rows = Object.entries(specs).map(([k, v]) => {
+      const ratio = (v.supply / (v.demand || 1)).toFixed(2);
+      const cls = ratio > 1.5 ? 'p' : ratio > 0.8 ? 'w' : 'u';
+      return `<tr><td>${k}</td><td>${v.orders}</td><td>${v.demand.toFixed(1)}t</td><td>${v.coils}</td><td>${v.supply.toFixed(1)}t</td><td><span class="dot-s ${cls}"></span>${ratio}x</td></tr>`;
+    }).join('');
+    showResults(`<div class="card"><div class="card-h">📊 Supply-Demand Balance by Spec</div><div class="card-b"><table class="tbl"><thead><tr><th>Specification</th><th>Orders</th><th>Demand</th><th>Coils</th><th>Supply</th><th>Ratio</th></tr></thead><tbody>${rows}</tbody></table></div></div>`);
+  }, 500);
+}
+
+</script>
+</body>
+</html>

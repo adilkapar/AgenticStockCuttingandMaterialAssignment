@@ -1,0 +1,186 @@
+const XLSX = require('xlsx');
+const wb = XLSX.utils.book_new();
+
+// Sheet 1: Case(Descriptions) - Generalized for Mill Products Industry
+const ws1 = XLSX.utils.aoa_to_sheet([
+  ['', 'EN'],
+  ['Description', [
+    'The stock cutting and material assignment process across Mill Products industries (steel, aluminum, paper, packaging, plastics, textiles, glass)',
+    'is a universal optimization challenge. Processors purchase large master rolls, coils, or sheets of raw material and must cut them into smaller',
+    'pieces matching customer order specifications — while minimizing waste (trim loss) and maximizing material utilization.',
+    '',
+    'The core challenge is industry-universal: raw materials must be procured before customer orders exist because supplier lead times (2-12 weeks)',
+    'exceed order confirmation horizons. Each raw material unit has multiple physical/chemical parameters that must match order requirements.',
+    'The matching and cutting pattern optimization is NP-hard with multiple conflicting objectives.',
+    '',
+    'Using an agentic AI architecture with SAP Joule as orchestrator, specialized domain agents (Order Agent, Stock Agent), and an MCP-based',
+    'optimization server, the system automates feasibility matching, optimal assignment, and cutting pattern generation across any mill product',
+    'type — then writes results directly back to SAP S/4HANA as reservations and production orders.',
+    '',
+    'APPLICABLE SUB-INDUSTRIES:',
+    '- Steel Service Centers: Coil slitting, cut-to-length (13+ parameters)',
+    '- Aluminum Processing: Sheet/coil cutting with alloy/temper matching',
+    '- Paper & Packaging: Roll slitting, sheeting with grade/weight/caliper matching',
+    '- Film & Plastics: Film slitting with gauge/clarity/treatment matching',
+    '- Textile: Fabric roll cutting with weave/color/finish matching',
+    '- Glass: Sheet cutting with thickness/coating/temper matching',
+    '- Copper/Brass: Strip slitting with alloy/temper/conductivity matching'
+  ].join('\n')],
+  ['CHALLENGES AND BUSINESS DRIVERS', [
+    '1. PARAMETER-INTENSIVE MATCHING: Raw materials characterized by 5-15+ physical/chemical parameters.',
+    '   Each parameter must match customer order specifications exactly or within tolerance.',
+    '   Steel: 13 params (quality, thickness, width, coating, roughness, passivation...)',
+    '   Paper: 8+ params (grade, basis weight, caliper, brightness, moisture, formation...)',
+    '   Aluminum: 10+ params (alloy, temper, thickness, width, surface finish, coating...)',
+    '',
+    '2. PROCUREMENT BEFORE DEMAND: Raw materials ordered weeks/months before customer orders confirmed.',
+    '   Creates structural mismatch between supply (what was purchased) and demand (what is ordered).',
+    '   Universal across all mill products due to manufacturing lead times at suppliers.',
+    '',
+    '3. MANUAL PLANNING DEPENDENCY: Cutting plans created by experienced planners using spreadsheets/intuition.',
+    '   Knowledge is trapped in individuals, non-scalable, and produces suboptimal results.',
+    '   Industry average: 8-20% trim waste vs 2-5% achievable with optimization.',
+    '',
+    '4. MULTIPLE CONFLICTING OBJECTIVES: Every mill processor faces the same trade-offs:',
+    '   - Minimize trim/scrap waste (material cost)',
+    '   - Minimize tardy orders (customer satisfaction)',
+    '   - Minimize idle/aging stock (working capital)',
+    '   - Maximize throughput (revenue)',
+    '   - Balance production lines (efficiency)',
+    '',
+    '5. DYNAMIC DISRUPTIONS: Plans break daily due to:',
+    '   - Rush orders / order date changes',
+    '   - Supplier delays or quality issues',
+    '   - Machine breakdowns / capacity changes',
+    '   - Forecast inaccuracy',
+    '',
+    '6. SAP GAP: Standard SAP PP/MRP handles material requirements but not:',
+    '   - Combinatorial cutting pattern optimization (bin-packing/cutting-stock problem)',
+    '   - Multi-parameter feasibility matching with near-custom specifications',
+    '   - Simultaneous multi-objective assignment across hundreds of orders/materials'
+  ].join('\n')],
+  ['SOLUTION', [
+    'An Agentic AI system built on SAP BTP — industry-configurable for any mill product type:',
+    '',
+    '1. SAP JOULE ORCHESTRATOR: Natural language interface in SAP Fiori.',
+    '   LLM reasoning (ReAct pattern) to decompose requests, delegate to agents, invoke tools, explain results.',
+    '   Industry-agnostic orchestration logic — same reasoning applies to steel, paper, aluminum, etc.',
+    '',
+    '2. ORDER AGENT (Demand Specialist): Reads SAP SD sales orders and forecasts.',
+    '   Configurable order parameters per industry (steel: 13 params, paper: 8 params, aluminum: 10 params).',
+    '   Manages feasibility evaluation, fulfillment tracking, urgency scoring.',
+    '',
+    '3. STOCK AGENT (Supply Specialist): Reads SAP MM raw material inventory.',
+    '   Handles industry-specific material master data (coils, rolls, sheets, reels).',
+    '   Manages reservations, availability, idle detection, supply-demand balance.',
+    '',
+    '4. MCP OPTIMIZATION SERVER (Python/OR-Tools) — 5 configurable tools:',
+    '   - build_feasibility_network: N-parameter matching + connected component decomposition',
+    '   - solve_cutting_pattern: 1D/2D bin-packing (slitting, sheeting, cross-cutting, combined)',
+    '   - optimize_assignment: Multi-objective MILP with configurable objective weights',
+    '   - evaluate_plan: KPI computation and plan comparison',
+    '   - suggest_purchase_orders: Procurement gap recommendations',
+    '',
+    '5. SAP INTEGRATION: Bidirectional and event-driven.',
+    '   Read: CDS views / OData V4 (configurable per customer SAP landscape)',
+    '   Write: BAPI (reservations MB21, production orders CO01, purchase reqs ME51N)',
+    '   React: SAP Event Mesh (new orders, material receipts, date changes)'
+  ].join('\n')],
+  ['BENEFITS', [
+    'QUANTITATIVE BENEFITS (typical across mill industries):',
+    '- Trim/scrap reduction: 50-75% improvement (e.g., from 10% to 3%)',
+    '- Planning time: hours of manual work to <15 seconds automated',
+    '- Order fulfillment: improvement to 90-95%+ with automatic gap identification',
+    '- Idle stock reduction: 20-40% through proactive material-to-order matching',
+    '- Working capital improvement: faster stock turns, less aging inventory',
+    '',
+    'INDUSTRY-SPECIFIC IMPACT EXAMPLES:',
+    '- Steel (500t/month, EUR 800/ton): EUR 28,000/month savings from trim reduction alone',
+    '- Paper (1000t/month, EUR 600/ton): EUR 42,000/month savings',
+    '- Aluminum (200t/month, EUR 2,500/ton): EUR 35,000/month savings',
+    '',
+    'QUALITATIVE BENEFITS:',
+    '- Eliminates person-dependency (business rules captured in configuration)',
+    '- Full explainability — AI explains every assignment decision in business terms',
+    '- Proactive re-planning via SAP events (new orders, supply changes)',
+    '- What-if scenario exploration without developer intervention',
+    '- Every plan immediately actionable as SAP shop order',
+    '- Standardized process across plants, shifts, and planners',
+    '- Scalable: same system serves multiple industry verticals via configuration'
+  ].join('\n')],
+  ['COMMENTS', [
+    '"The cutting optimization problem is fundamentally the same whether you cut steel coils, paper rolls, or aluminum sheets.',
+    'What changes is the parameter set and the machine constraints. The AI reasoning and SAP integration are universal."',
+    '- Solution Architect',
+    '',
+    '"We purchase raw material worth millions before knowing exactly what customers will order.',
+    'Having an AI that optimally matches supply to demand across complex specifications',
+    'and creates SAP production orders automatically — that is transformational for any mill processor."',
+    '- VP Operations, Mill Products Company',
+    '',
+    '"In paper converting, we used to waste 12% of every parent roll. The agentic system brought us down to 4%.',
+    'The same logic applies to steel service centers, aluminum converters — anyone doing cut-to-order processing."',
+    '- Production Manager, Paper Converting'
+  ].join('\n')],
+  ['Business Questions', [
+    '- Do you cut/slit/sheet raw materials (rolls, coils, sheets) to fulfill customer orders?',
+    '- Must raw materials match customer orders across multiple physical/chemical parameters?',
+    '- Do you procure raw materials before confirmed customer orders exist?',
+    '- Is your cutting/slitting planning done manually or with basic spreadsheets?',
+    '- Do you experience >5% trim/scrap loss in your cutting operations?',
+    '- Is planning expertise concentrated in a few key individuals?',
+    '- Are your material plans frequently disrupted by order changes or supply delays?',
+    '- Would you benefit from automatic identification of unfulfillable orders?',
+    '- Do you need to balance conflicting objectives (waste vs delivery vs stock)?',
+    '- Would natural language interaction for planning be valuable for your operations team?',
+    '- Do you run SAP S/4HANA for inventory and order management?',
+    '- Is reducing working capital tied up in idle/aging stock a priority?'
+  ].join('\n')]
+]);
+ws1['!cols'] = [{ width: 30 }, { width: 110 }];
+XLSX.utils.book_append_sheet(wb, ws1, 'Case(Descriptions)');
+
+// Sheet 2: Experiance Agent(lookups) - Mill Products broad
+const ws2 = XLSX.utils.aoa_to_sheet([
+  ['Level of Maturity', 'Industry', 'Industry Cluster', 'Industry Segments', 'Product Category L1', 'Product Category L2', 'Customer Segment', 'Focus Topic', 'Buyer Persona'],
+  ['Actionable Use Case', 'Mill Products', 'Discrete Industries', 'Building Materials', 'Artificial Intelligence', 'Supply Chain Planning', 'Enterprise Segment', 'Artificial Intelligence', 'COO'],
+  ['Preperation', 'Industrial Manufacturing', 'Cross Industry Cluster', 'Transportation and Logistics', 'Business Technology Platform', 'Supply Chain Logistics', 'Corporate Segment', 'Digital Transformation', 'CIO'],
+  ['On Going', 'Wholesale Distribution', 'Consumer Industries', 'Fashion (Consumer Products)', 'Supply Chain Management', 'Application Development and Automation', 'Midmarket', 'Data to Insight', 'CPO'],
+  ['Declined', 'Automotive', 'Energy and Natural Resources', 'OEM (High Tech)', 'Enterprise Resource Planning', 'Analytics and Planning', 'Key Accounts', 'User Experience', 'CTO'],
+  ['', 'Chemicals', 'Service Industries', 'Semiconductors', 'CRM and Customer Experience', 'Integration', 'Partner Led', 'Business AI', 'CFO'],
+  ['', 'Engineering, Construction, and Operations', '', '', 'Human Capital Management', 'Procurement', 'Strategic Customer Program', '', ''],
+  ['', 'Mining', '', '', 'Spend Management', 'Enterprise Asset Management', '', '', ''],
+  ['', 'Metals', '', '', 'Financial Management', 'Manufacturing', '', '', ''],
+  ['', 'Consumer Products', '', '', '', 'Commerce', '', '', ''],
+  ['', 'Retail', '', '', '', '', '', '', ''],
+]);
+ws2['!cols'] = [{ width: 20 }, { width: 35 }, { width: 25 }, { width: 28 }, { width: 28 }, { width: 32 }, { width: 25 }, { width: 22 }, { width: 15 }];
+XLSX.utils.book_append_sheet(wb, ws2, 'Experiance Agent(lookups)');
+
+// Sheet 3: Buyer Persona - Mill Products general
+const ws3 = XLSX.utils.aoa_to_sheet([
+  ['COO: Chief Operating Officer - Owns production operations, capacity utilization, and operational KPIs across mill processing facilities'],
+  ['CIO: Chief Information Officer - SAP S/4HANA and BTP platform strategy, digital transformation of manufacturing operations'],
+  ['CPO: Chief Procurement Officer - Raw material sourcing (coils, rolls, sheets), supplier management, inventory optimization'],
+  ['VP Manufacturing: Production line efficiency, scrap/trim rates, capacity utilization, quality management'],
+  ['Production Planning Manager: Daily/weekly cutting plans, material assignments, production scheduling, exception handling'],
+  ['Supply Chain Director: End-to-end from raw material procurement through processing to customer delivery'],
+  ['Plant Manager: Site-level operations, cross-functional coordination, cost center management'],
+  [''],
+  ['Persona', 'Priorities', 'Decision Factors', 'Communication Approach'],
+  ['COO', 'Operational efficiency, waste minimization, OTD, line utilization across plants', 'Scrap/trim rate (target <5%), order fulfillment (>90%), planning automation level, cost per ton processed', 'Operational KPI dashboards, ROI models, risk reduction, scalability across sites'],
+  ['CIO', 'SAP integration quality, data security, multi-plant scalability, BTP strategy', 'SAP-native architecture, data residency compliance, API standards, multi-tenant support, upgrade path', 'Technical architecture, security posture, SAP roadmap alignment, integration complexity'],
+  ['CPO', 'Material cost optimization, supplier diversification, stock aging reduction', 'Purchase recommendation accuracy, idle stock visibility, lead time forecasting, supplier performance', 'Working capital impact, procurement efficiency gains, supply risk mitigation'],
+  ['VP Manufacturing', 'Line throughput, trim/scrap minimization, quality compliance, machine utilization', 'Trim % improvement, pattern efficiency, machine constraint handling, quality parameter matching', 'Before/after comparisons, waste reduction metrics, throughput improvement'],
+  ['Production Planning Manager', 'Plan quality, execution speed, SAP actionability, handling disruptions', 'Natural language ease, explainability of decisions, what-if capability, speed of re-planning', 'Hands-on demo, daily workflow fit, time savings quantification, exception handling'],
+  ['Supply Chain Director', 'End-to-end optimization, forecast-to-delivery cycle, customer satisfaction', 'Demand-supply visibility, proactive alerts, event-based replanning, integrated KPI view', 'Strategic value narrative, competitive positioning, customer experience improvement'],
+  ['Plant Manager', 'Site-level efficiency, cross-shift consistency, labor productivity', 'Ease of deployment, training requirements, standardization across shifts, support model', 'Implementation timeline, change management, quick wins identification'],
+]);
+ws3['!cols'] = [{ width: 35 }, { width: 60 }, { width: 60 }, { width: 50 }];
+XLSX.utils.book_append_sheet(wb, ws3, 'Buyer Persona');
+
+// Sheet 4: generation-prompt(EKX) - Mill Products general
+const ws4 = XLSX.utils.aoa_to_sheet([
+  ['Prompt Type', 'Prompt Text'],
+  ['Use Case Summary', 'Generate a 1-page executive summary for an Agentic AI solution solving Stock Cutting and Material Assignment across the Mill Products industry (steel, aluminum, paper, packaging, plastics, textiles). SAP Joule orchestrator + Order/Stock agents + MCP optimization server (OR-Tools). Industry-configurable parameter sets. Reads SAP S/4HANA MM/SD, writes reservations and production orders. Reduces trim/scrap by 50-75%, automates planning in <15 seconds, provides natural language interaction with full explainability. Applicable to any processor that cuts/slits raw material rolls, coils, or sheets to customer order specifications.'],
+  ['Technical Architecture', 'Generate technical architecture for an industry-configurable agentic cutting optimization system on SAP BTP serving Mill Products companies (steel, paper,
